@@ -1,0 +1,60 @@
+<!--pages/tasks/tasks.wxml-->
+<view class='cu-custom' style="height:{{CustomBar}}px;">
+  <view class="cu-bar fixed bg-gradual-blue" style="height:{{CustomBar}}px;padding-top:{{StatusBar}}px;">
+    <view class='content' style='top:{{StatusBar}}px;'>任务</view>
+  </view>
+</view>
+
+<view class='cu-card'>
+  <view wx:for="{{1}}" wx:key class='cu-item shadow'>
+      <navigator url="./editor?method=new">
+          <view class='padding-sm text-center text-lg'>+手工添加新任务</view>
+      </navigator>
+  </view>
+</view>
+
+<view class='cu-card article'>
+    <view wx:for="{{taskList}}" wx:key class='cu-item shadow'>
+        <view class='title'>{{item.taskName}}</view>
+        <view class='content'>
+            <view class="desc">
+                <view class='text-content'> {{item.description}}</view>
+            </view>
+        </view>
+        <view class='text-gray text-right padding-sm'>
+                <button class='cu-btn icon' data-idx='{{index}}' bindtap='assignTask'>
+                    <text class='icon-right'></text>
+                </button>
+                <button class='cu-btn icon margin-left-sm' data-idx='{{index}}' bindtap='updateTask'>
+                    <text class='icon-write'></text>
+                </button>
+                <button wx:if="{{item.source=='self'}}" class='cu-btn icon margin-left-sm'  data-idx='{{index}}' bindtap='showModal' data-target='DeleteTask'>
+                    <text class='icon-delete'></text>
+                </button>        
+        </view>
+    </view>
+</view>
+
+<view class="cu-modal {{modalName=='DeleteTask'?'show':''}}">
+  <view class="cu-dialog">
+    <view class="cu-bar bg-white justify-end">
+      <view class='content'>提示</view>
+      <view class='action' bindtap='hideModal'>
+        <text class='icon-close text-red'></text>
+      </view>
+    </view>
+    <view class='padding-xl'>
+      确实要删除此任务吗？
+    </view>
+    <view class="cu-bar bg-white justify-end">
+      <view class='action'>
+        <button class='cu-btn line-green text-green' bindtap='hideModal'>取消</button>
+        <button class='cu-btn bg-green margin-left' bindtap='deleteTask'>确定</button>
+
+      </view>
+    </view>
+  </view>
+</view>
+
+<view class='cu-tabbar-height'></view>
+

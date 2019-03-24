@@ -1,0 +1,53 @@
+{
+  "pages": [
+    "pages/scheduler/scheduler",
+    "pages/tasks/tasks",
+    "pages/tasks/assign",
+    "pages/tasks/editor",
+    "pages/activities/activities",
+    "pages/activities/editor",
+    "pages/setup/setup",
+    "pages/logs/logs",
+    "pages/tasks/alp"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "星星日程",
+    "navigationStyle": "custom",
+    "navigationBarTextStyle": "white"
+  },
+  "usingComponents": {},
+  "tabBar": {
+    "custom": true,
+    "color": "#a9b7b7",
+    "selectedColor": "#11cd6e",
+    "borderStyle": "white",
+    "list": [
+      {
+        "selectedIconPath": "images/view.png",
+        "iconPath": "images/view.png",
+        "pagePath": "pages/scheduler/scheduler",
+        "text": "日程"
+      },
+      {
+        "selectedIconPath": "images/view.png",
+        "iconPath": "images/view.png",
+        "pagePath": "pages/tasks/tasks",
+        "text": "任务"
+      },
+      {
+        "selectedIconPath": "images/view.png",
+        "iconPath": "images/view.png",
+        "pagePath": "pages/activities/activities",
+        "text": "活动"
+      },
+      {
+        "selectedIconPath": "images/view.png",
+        "iconPath": "images/view.png",
+        "pagePath": "pages/setup/setup",
+        "text": "设置"
+      }
+    ]
+  }
+}

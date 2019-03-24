@@ -1,0 +1,127 @@
+<!--pages/tasks/alp.wxml-->
+<view class="cu-custom" style="height:{{CustomBar}}px;">
+  <view class="cu-bar fixed bg-gradual-blue" style="height:{{CustomBar}}px;padding-top:{{StatusBar}}px;">
+    <navigator class='action' open-type="navigateBack" delta="1" hover-class="none">
+      <text class='icon-back'></text> {{alpTask.task_title}}
+    </navigator>
+  </view>
+</view>
+
+<!--view class='cu-card article no-card'>
+    <view wx:for="{{1}}" wx:key class='cu-item shadow'>
+        <view class='title'>{{alpTask.task_title}}</view>
+        <view class='content'>
+            <view class="desc">
+                <view class='text-content'> {{alpTask.task_content}}</view>
+            </view>
+        </view>    
+    </view>
+</view--> 
+
+<view class="cu-bar bg-white solid-bottom margin-top" bindtap='toggleTaskHistory'>
+  <view class='action'>
+      <text class='icon-title text-blue '></text> 任务历史
+  </view>
+  <view class='action'>
+      <text class='icon-unfold' wx:if="{{!unfoldHistory}}"></text>
+      <text class='icon-fold' wx:if="{{unfoldHistory}}"></text>
+  </view>
+</view>
+
+<view class="padding text-left" wx:if="{{unfoldHistory}}">
+    <view wx:for="{{alpTask.replays}}" wx:key>
+      <view class="padding radius shadow bg-white margin-top-xs">
+          <view class='text-lg'>{{item.replay_title}}</view>
+          <view class='text-grey text-xs'>{{item.createdAt}}</view>
+          <view class='margin-top-xs'>{{item.replay_content}}</view>
+          <view class='text-gray text-right'>.
+              <button class='cu-btn icon' data-idx='{{index}}'>
+                    <text class='icon-video'></text>
+              </button>
+          </view>
+      </view>
+    </view>
+</view>
+
+<!--view class='padding'>
+    <view class='flex padding shadow radius bg-white justify-center'>
+        <video src="{{videoSrc}}" autoplay='true' loop='true'></video>
+    </view>
+</view-->
+
+<view class="cu-bar bg-white solid-bottom margin-top">
+  <view class='action'>
+    <text class='icon-title text-blue '></text> 处理任务
+  </view>
+</view>
+
+<view class="padding text-left">
+    <form catchsubmit='submitTaskProgress'>
+      <view class="padding radius shadow bg-white margin-top-xs">
+          <view class="cu-form-group">
+              <view class='title'>标题:</view>
+              <input placeholder="请输入标题" class='radius' name='title'></input>
+          </view>  
+          <view class="cu-form-group" wx:hide="{{modalName==null}}">
+              <view class='title'>说明:</view>
+              <textarea placeholder="请输入说明" name="description"  maxlength="-1" disabled="{{modalName!=null}}" placeholder-class='placeholder'></textarea>
+          </view>
+          <view class="cu-form-group">
+              <view class='title'>视频（请点击图标上传视频）:</view>
+              <!--input placeholder="请点击图标上传视频" class='radius' name='videoUrl' disabled='true'></input-->
+              <button class='cu-btn icon margin-left-sm' data-idx='{{index}}' bindtap='uploadFileToALP'>
+                  <text class='icon-upload'></text>
+              </button>              
+          </view>
+          <view class='flex radius bg-white justify-center' wx:if='{{videoSrc}}'>
+            <video src="{{videoSrc}}" autoplay='true' loop='true'></video>
+          </view>
+          <view class="padding-xs flex flex-direction">
+              <button class='cu-btn bg-grey margin-bottom-sm' form-type='reset'>重置</button>
+              <button class='cu-btn bg-blue' form-type='submit'>提交</button>
+          </view>
+      </view>
+    </form>
+</view>
+
+<view class="cu-modal {{modalName=='uploadSuccess'?'show':''}}">
+  <view class="cu-dialog">
+    <view class="cu-bar bg-white justify-end">
+      <view class='content'>上传成功</view>
+      <view class='action' bindtap='hideModal'>
+        <text class='icon-close text-red'></text>
+      </view>
+    </view>
+    <!--view class='flex radius bg-white justify-center'>
+            <video src="{{videoSrc}}" autoplay='true' loop='true'></video>
+    </view-->
+    <view class="cu-bar bg-white justify-end">
+      <view class='action'>
+        <button class='cu-btn line-green text-green' bindtap='hideModal'>确定</button>
+      </view>
+    </view>
+  </view>
+</view>
+
+<view class="cu-modal {{modalName=='uploadFail'?'show':''}}">
+  <view class="cu-dialog">
+    <view class="cu-bar bg-white justify-end">
+      <view class='content'>上传失败</view>
+      <view class='action' bindtap='hideModal'>
+        <text class='icon-close text-red'></text>
+      </view>
+    </view>
+    <view class='padding-xl'>
+            请重试
+    </view>
+    <view class="cu-bar bg-white justify-end">
+      <view class='action'>
+        <button class='cu-btn bg-green margin-left' bindtap='hideModal'>确定</button>
+      </view>
+    </view>
+  </view>
+</view>
+
+<view class='cu-load load-modal' wx:if="{{loadModal}}"> 
+    <view class='gray-text'>上传中...</view>
+</view>

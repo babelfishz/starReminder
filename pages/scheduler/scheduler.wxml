@@ -1,0 +1,34 @@
+<!--pages/scheduler/scheduler.wxml-->
+<view class='cu-custom' style="height:{{CustomBar}}px;">
+  <view class="cu-bar fixed bg-gradual-blue" style="height:{{CustomBar}}px;padding-top:{{StatusBar}}px;">
+    <view class='content' style='top:{{StatusBar}}px;'>{{Title}}</view>
+  </view>
+</view>
+
+<view class="cu-timeline">
+      <view class="cu-time">{{month}}月{{day}}日 </view>
+      <view class="cu-item" wx:for="{{activityList}}" wx:key>
+          <view class="content">
+              <text>{{item.activity.activityName}}\n</text>
+              <text>{{item.activity.startTime}}-{{item.activity.endTime}}\n</text>
+              <text>{{item.activity.description}}</text>        
+          </view>
+          <view class='cu-card '>
+              <view wx:for="{{item.tasks}}" wx:key class='cu-item shadow' wx:for-item="task">
+                  <view class='text-content'>
+                      <text>{{task.taskName}}\n</text>
+                      <text>{{task.description}}\n</text>
+                  </view>
+              </view>
+          </view>      
+      </view>
+
+      <view class="cu-item">
+          <view class="content">暂时没有更多的活动了</view>
+          <view style='height:{{sysH}}px'></view>
+      </view>
+
+</view>
+
+<view class='cu-tabbar-height'></view>
+

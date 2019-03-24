@@ -1,0 +1,36 @@
+<!--pages/tasks/assign.wxml-->
+<view class="cu-custom" style="height:{{CustomBar}}px;">
+  <view class="cu-bar fixed bg-gradual-blue" style="height:{{CustomBar}}px;padding-top:{{StatusBar}}px;">
+    <navigator class='action' open-type="navigateBack" delta="1" hover-class="none">
+      <text class='icon-back'></text> 任务分配
+    </navigator>
+  </view>
+</view>
+
+<view class='cu-card article'>
+    <view wx:for="{{1}}" wx:key class='cu-item shadow'>
+        <view class='title'>{{task.taskName}}</view>
+        <view class='content'>
+            <view class="desc">
+                <view class='text-content'> {{task.description}}</view>
+            </view>
+        </view>    
+    </view>
+</view> 
+
+<view class='cu-card'>
+    <view wx:for="{{1}}" wx:key class='cu-item shadow'>
+        <checkbox-group bindchange="checkboxChange">
+            <view class="cu-form-group margin-top" wx:for='{{activityList}}' wx:key>
+                <view class='title'>{{item.activity.activityName}}</view>
+                <checkbox value='{{item.activity.id}}' checked='{{item.checked}}'></checkbox>
+            </view>
+        </checkbox-group>
+
+        <view class="padding margin-top flex flex-direction">
+            <button class='cu-btn bg-blue' data-idx="{{index}}" bindtap='submitAssignment'>提交</button>
+        </view>
+    </view>
+</view> 
+
+

@@ -1,0 +1,59 @@
+<!--index.wxml-->
+<view class='cu-custom' style="height:{{CustomBar}}px;">
+  <view class="cu-bar fixed bg-gradual-blue" style="height:{{CustomBar}}px;padding-top:{{StatusBar}}px;">
+    <view class='content' style='top:{{StatusBar}}px;'>设置</view>
+  </view>
+</view>
+
+<view class="cu-bar bg-white solid-bottom margin-top">
+  <view class='action'>
+    <text class='icon-title text-blue '></text> 个人设置
+  </view>
+</view>
+
+<view class="padding-xl bg-white radius shadow-lg margin-top-xs">
+  <view class="flex justify-center">
+    <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
+    <block wx:else>
+      <view class='text-center'>
+        <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
+        <view class="padding">{{userInfo.nickName}}</view>
+      </view>
+    </block>
+  </view>
+</view>
+
+<!--view class="text-center margin-top">
+    <text class="text-grey text-xl">{{motto}}</text>
+</view-->
+
+<view class="cu-bar bg-white solid-bottom margin-top">
+  <view class='action'>
+    <text class='icon-title text-blue '></text> 应用设置
+  </view>
+</view>
+
+<view class="cu-form-group margin-top-xs">
+        <view class='title margin-left'>启用ALP网站</view>
+        <switch class='sm' checked='{{isAlpEnabled}}' bindchange='isAlpEnabled'></switch>
+</view>
+<form catchsubmit ='saveAlpSetup'>
+    <view wx:if='{{isAlpEnabled}}'>
+        <view  class="cu-form-group margin-top-xs">
+            <view class='title margin-left'>用户名：</view>
+            <input placeholder="ALP 用户名" class='radius' name='userName' value="{{alpUserName}}"></input>
+        </view>
+        <view class="cu-form-group">
+            <view class='title margin-left'>密码：</view>
+            <input class='radius' placeholder="ALP用户密码" name='password' password='true' value="{{alpUserPassword}}"></input>
+        </view>
+        <view class="bg-white">
+            <view class="flex solid-bottom padding justify-end">
+                <button class='cu-btn' form-type='reset'>重置</button>
+                <button class='cu-btn margin-left-xs bg-green' form-type='submit'>保存</button>
+            </view>
+        </view>        
+   
+    </view>
+</form>
+

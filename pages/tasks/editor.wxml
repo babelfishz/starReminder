@@ -1,0 +1,71 @@
+<!--pages/tasks/editor.wxml-->
+<view class="cu-custom" style="height:{{CustomBar}}px;">
+  <view class="cu-bar fixed bg-gradual-blue" style="height:{{CustomBar}}px;padding-top:{{StatusBar}}px;">
+    <navigator class='action' open-type="navigateBack" delta="1" hover-class="none">
+      <text class='icon-back'></text> {{title}}
+    </navigator>
+  </view>
+</view>
+
+<view class='cu-card'>
+  <view wx:for="{{1}}" wx:key class='cu-item shadow'>
+    <form catchsubmit="addTask">
+          <view class='padding-xs bg-cyan text-center text-lg'>{{title}}</view>
+
+          <view class="cu-form-group">
+              <view class='title'>任务名称:</view>
+              <input value='{{task.taskName}}'  placeholder="请输入任务名称" class='radius' name='name'></input>
+          </view>  
+          
+          <view class="cu-form-group" wx:hide="{{modalName==null}}">
+              <view class='title'>任务描述:</view>
+              <textarea value='{{task.description}}' placeholder="请输入任务描述" name="description"  maxlength="-1" disabled="{{modalName!=null}}" placeholder-class='placeholder'></textarea>
+          </view>
+
+          <view class="padding-xs flex flex-direction">
+              <button class='cu-btn bg-grey margin-bottom-sm' bindtap='resetTask'>重置</button>
+              <button class='cu-btn bg-blue' form-type='submit'>{{buttonText}}</button>
+          </view>
+    </form>
+  </view>
+</view>
+
+<view class="cu-modal {{modalName=='success'?'show':''}}">
+  <view class="cu-dialog">
+    <view class="cu-bar bg-white justify-end">
+      <view class='content'>{{title}}成功</view>
+      <view class='action' bindtap='hideModal'>
+        <text class='icon-close text-red'></text>
+      </view>
+    </view>
+    <view class='padding-xl'>
+      需要继续{{title}}吗？
+    </view>
+    <view class="cu-bar bg-white justify-end">
+      <view class='action'>
+        <button class='cu-btn line-green text-green' bindtap='hideModal'>继续</button>
+        <button class='cu-btn bg-green margin-left' bindtap='bindNavigateBack'>返回</button>
+      </view>
+    </view>
+  </view>
+</view>
+
+<view class="cu-modal {{modalName=='fail'?'show':''}}">
+  <view class="cu-dialog">
+    <view class="cu-bar bg-white justify-end">
+      <view class='content'>{{title}}失败</view>
+      <view class='action' bindtap='hideModal'>
+        <text class='icon-close text-red'></text>
+      </view>
+    </view>
+    <view class='padding-xl'>
+      需要重试吗？
+    </view>
+    <view class="cu-bar bg-white justify-end">
+      <view class='action'>
+        <button class='cu-btn line-green text-green' bindtap='hideModal'>继续</button>
+        <button class='cu-btn bg-green margin-left' bindtap='bindNavigateBack'>返回</button>
+      </view>
+    </view>
+  </view>
+</view>
