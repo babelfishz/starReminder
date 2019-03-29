@@ -24,6 +24,9 @@ Page({
       data: {
         'withAssignment': 'yes',
       },
+      header: {
+        'Authorization': "Bearer " + app.globalData.userToken,
+      },
       success: function (res) {
         //console.log(res);
         var activityList = res.data;
@@ -65,6 +68,9 @@ Page({
         'source': that.data.task.source,
         'taskId': that.data.task.id,
         'chosen': chosen ,
+      },
+      header: {
+        'Authorization': "Bearer " + app.globalData.userToken,
       },
       success: function (res) {
         //console.log(res);

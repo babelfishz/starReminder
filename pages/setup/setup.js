@@ -13,17 +13,83 @@ Page({
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
 
+    userName:app.globalData.userName,
+    password: app.globalData.password,
+    
     isAlpEnabled: 'false',
     alpUserName: app.globalData.alpUserName,
     alpUserPassword:app.globalData.alpUserPassword,
   },
 
   //事件处理函数
-  bindViewTap: function() {
-    /*wx.navigateTo({
-      url: '../logs/logs'
-    })*/
+  createUser:function(){
+    let url = app.globalData.serverUrl + '/api/auth/signup';
+    wx.request({
+      url: url,
+      data: {
+        'name': 'lionfish',
+        'email': 'test@example.com',
+        'password': '123456',
+        'password_confirmation':'123456',
+      },
+      header: {
+
+      },
+      method: 'POST',
+      success: function (res) {
+        console.log(res);
+      },
+      fail: function (res) { },
+      complete: function (res) { },
+    })
+
   },
+
+  saveSetup: function (e) {
+    //console.log(e);
+    let userConfig = new Object();
+    userConfig.userName = e.detail.value.userName;
+    userConfig.password = e.detail.value.password;
+    userConfig.token = null;
+
+    try {
+      wx.setStorageSync("userConfig", userConfig);
+      wx.showToast({
+        title: '保存成功',
+        icon: 'none',
+      })
+
+      app.globalData.userName = userConfig.userName;
+      app.globalData.password = userConfig.password;
+      app.globalData.userToken = userConfig.token;
+
+      /*wx.reLaunch({
+        url: '../scheduler/scheduler',
+      })*/
+    } catch (e) {
+      wx.showToast({
+        title: '保存失败，请重试',
+        icon: 'none',
+      })
+    }
+  },
+
+  /*test:function(e){
+    let url= app.globalData.serverUrl + '/api/auth/activity'
+    wx.request({
+      url: url,
+      method: 'GET',
+      data: {
+        'withAssigment': 'no',
+      },
+      header: {
+        'Authorization': "Bearer " + app.globalData.userToken,
+      },
+      success: function (res) {
+        console.log(res);
+      },
+    });
+  },*/
 
   saveAlpSetup:function(e){
     //console.log(e);

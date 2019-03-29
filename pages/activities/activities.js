@@ -9,7 +9,7 @@ Page({
 
     activityList: [],
 
-    targerActivityIndex:'',
+    targetActivityIndex:'',
   },
 
   listActivity:function(){
@@ -22,15 +22,18 @@ Page({
       data: {
         'withAssigment': 'no',
       },
+      header:{
+        'Authorization':"Bearer "+ app.globalData.userToken,
+      },
       success: function (res) {
-        //console.log(res.data);
+        //console.log("activity.js",res.data);
         that.setData({ activityList:res.data});
       },
     });
   },
 
   updateActivity:function(e){
-    console.log(e);
+    //console.log(e);
     let index = e.currentTarget.dataset.idx;
     wx.navigateTo({
       url: './editor?method=update&idx='+index,
@@ -40,7 +43,7 @@ Page({
   deleteActivity:function(e){
     
     var that = this;
-    var idx = that.data.targerActivityIndex;
+    var idx = that.data.targetActivityIndex;
     var id = that.data.activityList[idx].id;
 
     that.hideModal();
@@ -53,18 +56,21 @@ Page({
       data: {
         //'id': id,
       },
+      header: {
+        'Authorization': "Bearer " + app.globalData.userToken,
+      },
       success: function (res) {
-        console.log(res.data);
+        //console.log(res.data);
         that.listActivity();
       },
     });
   },
 
   showModal(e) {
-    console.log(e);
+    //console.log(e);
+    this.data.targetActivityIndex = e.currentTarget.dataset.idx;
     this.setData({
       modalName: e.currentTarget.dataset.target,
-      targerActivityIndex:e.currentTarget.dataset.idx,
     })
   },
 

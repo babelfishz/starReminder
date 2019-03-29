@@ -32,6 +32,9 @@ Page({
         'name': name,
         'description': description,
       },
+      header: {
+        'Authorization': "Bearer " + app.globalData.userToken,
+      },
       success: function (res) {
         console.log(res);
         that.showModal('success');
@@ -87,7 +90,7 @@ Page({
       });
     }
 
-    console.log(this.data.task);
+    //console.log(this.data.task);
   },
 
   /**

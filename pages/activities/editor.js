@@ -38,6 +38,9 @@ Page({
         'endTime': that.data.endTime,
         'description': description,
       },
+      header: {
+        'Authorization': "Bearer " + app.globalData.userToken,
+      },
       success: function (res) {
         console.log(res);
         that.showModal('success');

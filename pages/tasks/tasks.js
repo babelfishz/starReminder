@@ -12,7 +12,7 @@ Page({
       tempList:[],
       taskList:[],
 
-      targerTaskIndex:'',
+      targetTaskIndex:'',
   },
 
   listTask:function(){
@@ -20,7 +20,7 @@ Page({
     if (app.globalData.alpEnabled == true && app.globalData.alpLogin == true) {
       that.getAlpUserTask();
     } else {
-      that.setData({tempList:[]});
+      that.data.tempList = [];
       that.getMyTask();
     }  
   },
@@ -37,8 +37,8 @@ Page({
         'token': app.globalData.alpToken,
       },
       success: function (res) {
-        console.log("alp",res.data);
-        that.setData({ alpTaskList: res.data });
+        //console.log("alp",res.data);
+        that.data.alpTaskList = res.data;
 
         let taskList = [];
         let i = 0;
@@ -52,7 +52,7 @@ Page({
           taskList.push(task);
           i++;
         }
-        that.setData({ tempList: taskList });
+        that.data.tempList= taskList;
 
         that.getMyTask();
         //console.log(that.data);
@@ -74,8 +74,11 @@ Page({
       method: 'GET',
       data: {
       },
+      header: {
+        'Authorization': "Bearer " + app.globalData.userToken,
+      },
       success: function (res) {
-        that.setData({ myTaskList: res.data });
+        that.data.myTaskList = res.data;
         //console.log(res.data);
 
         let i = 0;
@@ -100,7 +103,7 @@ Page({
     var that = this;
     that.hideModal();
 
-    var idx = that.data.targerTaskIndex;
+    var idx = that.data.targetTaskIndex;
     var id = that.data.taskList[idx].id;
     var url = getApp().globalData.serverUrl + getApp().globalData.taskPath + "/" + id;
 
@@ -109,6 +112,9 @@ Page({
       method: 'DELETE',
       data: {
         //'id': id,
+      },
+      header: {
+        'Authorization': "Bearer " + app.globalData.userToken,
       },
       success: function (res) {
         console.log(res.data);
@@ -139,9 +145,9 @@ Page({
   },
 
   showModal(e) {
+    this.data.targetTaskIndex = e.currentTarget.dataset.idx;
     this.setData({
       modalName: e.currentTarget.dataset.target,
-      targerTaskIndex: e.currentTarget.dataset.idx,
     })
   },
 
@@ -170,7 +176,6 @@ Page({
    */
   onShow: function () {
     this.getTabBar().setData({ selected: 1 });
-
     this.listTask();
     //console.log(this.data);
   },

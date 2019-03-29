@@ -16,7 +16,7 @@
     <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
     <block wx:else>
       <view class='text-center'>
-        <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
+        <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover" bindtap=''></image>
         <view class="padding">{{userInfo.nickName}}</view>
       </view>
     </block>
@@ -32,6 +32,23 @@
     <text class='icon-title text-blue '></text> 应用设置
   </view>
 </view>
+
+<form catchsubmit ='saveSetup'>
+        <view  class="cu-form-group margin-top-xs">
+            <view class='title margin-left'>用户名：</view>
+            <input placeholder="email地址" class='radius' name='userName' value="{{userName}}"></input>
+        </view>
+        <view class="cu-form-group">
+            <view class='title margin-left'>密码：</view>
+            <input class='radius' placeholder="用户密码" name='password' password='true' value="{{password}}"></input>
+        </view>
+        <view class="bg-white">
+            <view class="flex solid-bottom padding justify-end">
+                <button class='cu-btn' form-type='reset'>重置</button>
+                <button class='cu-btn margin-left-xs bg-green' form-type='submit'>保存</button>
+            </view>
+        </view>        
+</form>
 
 <view class="cu-form-group margin-top-xs">
         <view class='title margin-left'>启用ALP网站</view>
@@ -57,3 +74,4 @@
     </view>
 </form>
 
+<view class='cu-tabbar-height'></view>

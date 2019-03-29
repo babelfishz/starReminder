@@ -34,11 +34,21 @@
           <view class='text-lg'>{{item.replay_title}}</view>
           <view class='text-grey text-xs'>{{item.createdAt}}</view>
           <view class='margin-top-xs'>{{item.replay_content}}</view>
-          <view class='text-gray text-right'>.
-              <button class='cu-btn icon' data-idx='{{index}}'>
+          <view class='text-gray text-right' wx:if="{{item.replay_vides.length!=0}}">.
+              <button class='cu-btn icon' data-idx='{{index}}' bindtap='toggleReplayVideo'>
                     <text class='icon-video'></text>
               </button>
           </view>
+
+          <!--view wx:if="{{item.replay_vides.length!=0}}"-->
+          <view wx:if="{{item.showVideo}}">
+            <view wx:for="{{item.replay_vides}}" wx:for-item="replay_videos" >
+              <view class='flex padding shadow radius bg-white justify-center'>
+                  <video src="{{alpUrl}}{{replay_videos.video_path}}" autoplay='true' loop='true'></video>
+              </view>
+            </view>
+          </view>
+
       </view>
     </view>
 </view>
@@ -59,11 +69,11 @@
     <form catchsubmit='submitTaskProgress'>
       <view class="padding radius shadow bg-white margin-top-xs">
           <view class="cu-form-group">
-              <view class='title'>标题:</view>
+              <view class='title'>回复标题:</view>
               <input placeholder="请输入标题" class='radius' name='title'></input>
           </view>  
           <view class="cu-form-group" wx:hide="{{modalName==null}}">
-              <view class='title'>说明:</view>
+              <view class='title'>回复内容:</view>
               <textarea placeholder="请输入说明" name="description"  maxlength="-1" disabled="{{modalName!=null}}" placeholder-class='placeholder'></textarea>
           </view>
           <view class="cu-form-group">

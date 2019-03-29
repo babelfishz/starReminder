@@ -2,9 +2,9 @@
 App({
   onLaunch: function () {
     // 展示本地存储能力
-    var logs = wx.getStorageSync('logs') || []
-    logs.unshift(Date.now())
-    wx.setStorageSync('logs', logs)
+    //var logs = wx.getStorageSync('logs') || []
+    //logs.unshift(Date.now())
+    //wx.setStorageSync('logs', logs)
 
     // 登录
     wx.login({
@@ -34,6 +34,33 @@ App({
       }
     })
 
+    /* 读取缓存的用户登录信息 */
+    try {
+      let userConfig = wx.getStorageSync('userConfig');
+      //console.log(userConfig);
+
+      if(userConfig){
+        this.globalData.userName = userConfig.userName;
+        this.globalData.password = userConfig.password;
+        this.globalData.userToken = userConfig.token;
+      }else{
+        //this.globalData.userName = '';
+        //this.globalData.userPassword = '';
+        //this.globalData.userToken = null;
+      }
+      //console.log('read user config:',this.globalData);
+    } catch (e) {
+      //this.globalData.userName = '';
+      //this.globalData.userPassword = '';      
+      //this.globalData.userToken = null;
+    }
+
+    /*try{
+      this.globalData.userToken = wx.getStorageSync('userToken');
+    }catch(e){
+      this.globalData.userToken = '';
+    }*/
+    
     // 获取系统状态栏信息
     wx.getSystemInfo({
       success: e => {
@@ -44,6 +71,7 @@ App({
       }
     })
 
+    /*获取缓存的ALP设置*/
     try {
       const value = wx.getStorageSync('isAlpEnabled');
       //console.log(value);
@@ -52,6 +80,19 @@ App({
       //}
     } catch (e) {
         this.globalData.alpEnabled = false;
+    }
+
+    try {
+      const alpConfig = wx.getStorageSync('alpConfig');
+      if (alpConfig) {
+        if (alpConfig.token != null) {
+          this.globalData.alpToken = alpConfig.token;
+          this.globalData.alpUser = alpConfig.user;
+          this.globalData.alpLogin = true;
+        }
+      }
+    } catch (e) {
+      console.log(e);
     }
     
     //console.log(this.globalData.alpEnabled );
@@ -63,10 +104,19 @@ App({
 
     title:'星星日程',
 
-    serverUrl: "http://47.74.251.157/",
-    taskPath: 'api/task',
-    activityPath: 'api/activity',
-    assignmentPath: 'api/assignment',  
+    serverUrl: "http://47.74.251.157",
+    taskPath: '/api/task',
+    activityPath: '/api/activity',
+    assignmentPath: '/api/assignment', 
+    loginPath:'/api/auth/login',
+
+    userName:'presto@163.com',
+    password: '123456',
+    userLogin:false,
+    userToken:'',
+
+    /*for local data cache*/
+    dataChanged: false, 
 
     /*ALP user related*/
     alpEnabled: true,

@@ -15,11 +15,57 @@ Page({
     month:'',
     day:'',
 
+    /*login*/
+    userLogin: false,
+
     activityList: [],
     alpTasks:[],
   },
 
+  getUserToken: function () {
+    let url = app.globalData.serverUrl + '/api/auth/login';
+    let that = this;
+    
+    wx.request({
+      url: url,
+      data: {
+        'email': app.globalData.userName,
+        'password': app.globalData.password,
+        //'remember_me': true,
+      },
+      method: 'POST',
+      success: function (res) {
+        console.log(res);
+        //app.globalData.userLogin = true;
+        app.globalData.userToken = res.data.access_token;
+        that.setData({userLogin:true});
+        that.showActivity();
+
+        try{
+          let userConfig = wx.getStorageSync('userConfig');
+          userConfig.token = res.data.access_token;
+          wx.setStorageSync('userConfig', userConfig);
+          //let result = wx.getStorageSync('userConfig');
+          //console.log('userConfig written', result);
+        }catch(e){
+          console.log(e);
+        }
+      },
+      fail: function (res) { 
+        console.log(res);
+        app.globalData.userLogin = false;
+        wx.showToast({
+          title: '登录失败，请检查设置',
+          icon: 'none',
+        })      
+        },
+      complete: function (res) { },
+    })
+  },
+
   showActivity: function () {
+    if (app.globalData.userToken == null) return;
+
     var url = getApp().globalData.serverUrl + getApp().globalData.activityPath;
     var that = this;
 
@@ -29,52 +75,90 @@ Page({
       data: {
         'withAssignment': 'yes',
       },
+      header: {
+        'Authorization': "Bearer " + app.globalData.userToken,
+      },
       success: function (res) {
         //console.log("response:",res.data);
         //that.setData({ activityList: res.data });
         //console.log(that.data.activityList);
+        if(res.statusCode != 200) return;
 
         var i = 0;
         var activityList = [];
         while(res.data[i])
         {
-          let item = new Object();
-          item.activity = res.data[i].activity;
-          item.tasks = [];
-
-          let j=0;
-          while (res.data[i].tasks[j]){
-            let task = res.data[i].tasks[j];
-            
-            if(task.taskSource == 'self'){
-              item.tasks.push(task);
-            }
-            
-            if (task.taskSource == 'alp' && app.globalData.alpEnabled && app.globalData.alpLogin == true){
-              let alpTasks = that.data.alpTasks;
-              var alpTask = alpTasks.find((v) => {
-                return v._id == 22;
-              });
-              if(alpTask){
-                task.taskName = alpTask.task_title;
-                task.description = alpTask.task_content;
-                item.tasks.push(task);
-              }else{
-                console.log('Alp task has been deleted')
-              }
-            }
-            j++;
-          }
-
+          //console.log("activity",i, res.data[i]);
           var activity = res.data[i].activity;
-          if (that.timeInRange(activity.startTime, activity.endTime)) {
+          if (that.timeInRange(activity.startTime, activity.endTime)){
+
+            let item = new Object();
+            item.activity = res.data[i].activity;
+            item.tasks = [];
+
+            let j=0;
+            while (res.data[i].tasks[j]){
+              let task = res.data[i].tasks[j];
+              
+              if(task.taskSource == 'self'){
+                item.tasks.push(task);
+              }
+              
+              if (task.taskSource == 'alp' && app.globalData.alpEnabled && app.globalData.alpLogin == true){
+                let alpTasks = that.data.alpTasks;
+                var alpTask = alpTasks.find((v) => {
+                  return v._id == task.taskId;
+                });
+                if(alpTask){
+                  task.taskName = alpTask.task_title;
+                  task.description = alpTask.task_content;
+                  item.tasks.push(task);
+                }else{
+                  console.log('Alp task has been deleted',task);
+                  that.pruneAlpAssignment(task.activityId, task.taskId);
+                }
+              }
+              j++;
+            }
             activityList.push(item);
           }
-
           i++;
         }
         that.setData({ activityList: activityList});        
       },
+    });
+  },
+
+  getAlpUserToken:function(){
+    let url = app.globalData.alpUrl + app.globalData.alpLoginPath;
+    let that = this;
+    wx.request({
+      url: url,
+      method: 'POST',
+      data: {
+        'user_email': app.globalData.alpUserName,
+        'user_password': app.globalData.alpUserPassword,
+      },
+      success: function (res) {
+        //console.log(res.data);
+        app.globalData.alpToken = res.data.token;
+        app.globalData.alpUser = res.data.user;
+        app.globalData.alpLogin = true;
+        that.getAlpUserTask();
+
+        try{
+          let alpConfig = new Object();
+          alpConfig.token = res.data.token;
+          alpConfig.user = res.data.user;
+          wx.setStorageSync('alpConfig', alpConfig);
+        }catch(e){
+          console.log(e);
+        }
+      },
+      fail: function (res) {
+        console.log(res);
+        //app.globalData.alpLogin = false;
+      }
     });
   },
 
@@ -91,16 +175,18 @@ Page({
       },
       success: function (res) {
         //console.log("alp task list in scheduler",res.data);
-        that.setData({alpTasks:res.data});
+        that.data.alpTasks = res.data;
         that.showActivity();
       },
     });
   },
 
-  timeInRange:function (beginTime, endTime) {
+  pruneAlpAssignment:function(activityId, taskId){
+      console.log("activityId=",activityId, "taskId=",taskId);
+  },
 
+  timeInRange:function (beginTime, endTime) {
     var strb = beginTime.split(":");
-    //console.log(strb);
     if (strb.length != 2) {
        return false;
     }
@@ -121,13 +207,13 @@ Page({
 
     /*显示前一个小时和后一个小时的活动*/
     if(b.getHours() > 1 ) b.setHours(b.getHours() - 1);
-    if(e.getHours() < 23) e.setHours(b.getHours() + 1);
+    if(e.getHours() < 23) e.setHours(e.getHours() + 1);
 
     if (n.getTime() - b.getTime() > 0 && n.getTime() - e.getTime() < 0) {
         //console.log("在时间范围内");
         return true;
     } else {
-         //console.log("当前时间是：" + n.getHours() + ":" + n.getMinutes() + "，不在该时间范围内！");
+        //console.log("当前时间是：" + n.getHours() + ":" + n.getMinutes() + "，不在该时间范围内！");
         return false;
     }
   },
@@ -147,31 +233,6 @@ Page({
   onLoad: function (options) {
     var res = wx.getSystemInfoSync();
     this.setData({sysH:res.screenHeight});
-
-    /*登录到ALP系统*/
-    if (app.globalData.alpEnabled) {
-      let url = app.globalData.alpUrl + app.globalData.alpLoginPath;
-      let that = this;
-      wx.request({
-        url: url,
-        method: 'POST',
-        data: {
-          'user_email': app.globalData.alpUserName,
-          'user_password': app.globalData.alpUserPassword,
-        },
-        success: function (res) {
-          //console.log(res.data);
-          app.globalData.alpToken = res.data.token;
-          app.globalData.alpUser = res.data.user;
-          app.globalData.alpLogin = true;
-          that.getAlpUserTask();
-        },
-        fail:function(res){
-            console.log(res);
-            //app.globalData.alpLogin = false;
-        }
-      });
-    }      
   },
 
   /**
@@ -187,8 +248,20 @@ Page({
   onShow: function () {
     var that = this;
     that.getTabBar().setData({ selected: 0 });
+
+    /*登录到星星日程*/
+    if (app.globalData.userToken == null) {
+      this.getUserToken();
+    }
+
+    /*登录到ALP系统*/
+    if (app.globalData.alpEnabled && app.globalData.alpLogin != true) {
+      this.getAlpUserToken();
+    } 
+
     that.getDateTime();
     that.showActivity();
+
   },
 
   /**

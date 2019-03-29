@@ -8,11 +8,13 @@ Page({
   data: {
     StatusBar: app.globalData.StatusBar,
     CustomBar: app.globalData.CustomBar,
+    alpUrl: app.globalData.alpUrl,
 
     /*videoSrc: 'http://39.104.90.32:19090/video/jiazhang1@gmail.com/wxbf2f58706983f17a.o6zAJs7bYrJOHpob5IODEZp6Y8wY.vb3htt3LG5ao1693ae6b2d43986a259cd4812ab3a065.mp4',*/
 
     unfoldHistory: false,
     videoSrc: null,
+    
     loadModal:false,
   },
 
@@ -73,6 +75,14 @@ Page({
     this.setData({ unfoldHistory: !this.data.unfoldHistory });
   },
 
+  toggleReplayVideo:function(e){
+    console.log(e);
+    let i = e.currentTarget.dataset.idx;
+    let alpTask = this.data.alpTask;
+    alpTask.replays[i].showVideo = !alpTask.replays[i].showVideo;
+    this.setData({alpTask:alpTask});
+  },
+
   showModal(modalName) {
     this.setData({
       modalName: modalName,
@@ -93,8 +103,15 @@ Page({
     var prevPage = pages[pages.length - 2];  //上一个页面
     var that = this;
 
-    that.setData({ alpTask: prevPage.data.alpTaskList[options.idx] });
-    console.log(that.data.alpTask);
+    let alpTask = prevPage.data.alpTaskList[options.idx];
+    let i = 0;
+    while (alpTask.replays[i]){
+      alpTask.replays[i].showVideo = false;
+      i++;
+    }
+
+    that.setData({ alpTask: alpTask });
+    console.log("alp Task", that.data.alpTask);
   },
 
   /**
